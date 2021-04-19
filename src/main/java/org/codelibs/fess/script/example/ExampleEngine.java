@@ -8,14 +8,12 @@ public class ExampleEngine extends AbstractScriptEngine {
 
     @Override
     public Object evaluate(String template, Map<String, Object> paramMap) {
-        // TODO Auto-generated method stub
-        return null;
+         return template;
     }
 
     @Override
     protected String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "example";
     }
 
 }

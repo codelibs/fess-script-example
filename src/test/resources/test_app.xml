@@ -4,6 +4,4 @@
 <components>
 	<include path="convention.xml" />
 	<include path="lastaflute.xml" />
-	<component name="systemHelper" class="org.codelibs.fess.plugin.webapp.helper.CustomSystemHelper">
-	</component>
 </components>
