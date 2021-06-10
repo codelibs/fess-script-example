@@ -23,7 +23,7 @@ public class ExampleEngine extends AbstractScriptEngine {
 
     @Override
     public Object evaluate(String template, Map<String, Object> paramMap) {
-         return template;
+        return template;
     }
 
     @Override
