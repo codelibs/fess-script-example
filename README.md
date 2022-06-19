@@ -7,7 +7,7 @@ This is a example plugin for Fess Script.
 
 ## Download
 
-See [Maven Repository](http://central.maven.org/maven2/org/codelibs/fess/fess-script-example/).
+See [Maven Repository](https://repo1.maven.org/maven2/org/codelibs/fess/fess-script-example/).
 
 ## Installation
 
