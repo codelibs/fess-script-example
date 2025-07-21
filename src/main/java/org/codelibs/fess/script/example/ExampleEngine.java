@@ -19,13 +19,37 @@ import java.util.Map;
 
 import org.codelibs.fess.script.AbstractScriptEngine;
 
+/**
+ * Example script engine implementation that demonstrates how to create custom script engines for Fess.
+ * This implementation simply returns the template string unchanged without any processing.
+ */
 public class ExampleEngine extends AbstractScriptEngine {
 
+    /**
+     * Creates a new instance of ExampleEngine.
+     */
+    public ExampleEngine() {
+        super();
+    }
+
+    /**
+     * Evaluates the given template with the provided parameter map.
+     * In this example implementation, the template is returned unchanged without any processing.
+     *
+     * @param template the template string to evaluate
+     * @param paramMap the parameter map containing variables for template evaluation
+     * @return the template string unchanged
+     */
     @Override
     public Object evaluate(final String template, final Map<String, Object> paramMap) {
         return template;
     }
 
+    /**
+     * Returns the name of this script engine.
+     *
+     * @return the name "example" that identifies this script engine
+     */
     @Override
     protected String getName() {
         return "example";
