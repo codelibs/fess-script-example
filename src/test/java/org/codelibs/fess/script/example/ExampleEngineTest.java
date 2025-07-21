@@ -55,7 +55,7 @@ public class ExampleEngineTest extends LastaFluteTestCase {
         assertEquals("example", exampleEngine.getName());
     }
 
-    // Ultrathink comprehensive test cases
+    // Comprehensive test cases for evaluating various input scenarios
 
     public void test_evaluate_withNullTemplate() {
         final Map<String, Object> params = new HashMap<>();
