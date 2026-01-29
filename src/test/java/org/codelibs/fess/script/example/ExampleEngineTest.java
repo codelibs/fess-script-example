@@ -15,13 +15,15 @@
  */
 package org.codelibs.fess.script.example;
 
+import org.junit.jupiter.api.TestInfo;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codelibs.fess.util.ComponentUtil;
-import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
+import org.codelibs.fess.script.example.UnitScriptTestCase;
 
-public class ExampleEngineTest extends LastaFluteTestCase {
+public class ExampleEngineTest extends UnitScriptTestCase {
     public ExampleEngine exampleEngine;
 
     @Override
@@ -35,15 +37,15 @@ public class ExampleEngineTest extends LastaFluteTestCase {
     }
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUp(TestInfo testInfo) throws Exception {
+        super.setUp(testInfo);
         exampleEngine = new ExampleEngine();
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void tearDown(TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(null);
-        super.tearDown();
+        super.tearDown(testInfo);
     }
 
     public void test_evaluate() {
