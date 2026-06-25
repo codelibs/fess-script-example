@@ -4,4 +4,8 @@
 <components>
 	<include path="convention.xml" />
 	<include path="lastaflute.xml" />
+	<!-- Provide the script engine factory so tests can register the example
+	     engine and look it up by name, mirroring how Fess wires it in production. -->
+	<component name="scriptEngineFactory"
+		class="org.codelibs.fess.script.ScriptEngineFactory" />
 </components>

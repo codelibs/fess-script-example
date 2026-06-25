@@ -20,8 +20,18 @@ import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
 
+/**
+ * Minimal test base for the example plugin.
+ *
+ * <p>Fess core script tests (e.g. {@code GroovyEngineTest}) extend
+ * {@code org.codelibs.fess.unit.UnitFessTestCase}. That class lives in the Fess
+ * <em>test</em> sources, so it is published only in the Fess test-jar, which this plugin does
+ * not depend on (the {@code org.codelibs.fess:fess} dependency is the main jar, {@code provided}
+ * scope). Because {@code UnitFessTestCase} is therefore not on the plugin classpath, this plugin
+ * keeps its own thin base that extends UTFlute's {@code LastaFluteTestCase} directly and provides
+ * the same JUnit 4-style assertion bridges used across Fess tests.</p>
+ */
 public abstract class UnitScriptTestCase extends LastaFluteTestCase {
-    private static final ThreadLocal<TestInfo> currentTestInfo = new ThreadLocal<>();
 
     @Override
     protected String prepareConfigFile() {
@@ -29,81 +39,46 @@ public abstract class UnitScriptTestCase extends LastaFluteTestCase {
     }
 
     @Override
-    protected void setUp(TestInfo testInfo) throws Exception {
-        currentTestInfo.set(testInfo);
-        super.setUp(testInfo);
-    }
-
-    @Override
-    protected void tearDown(TestInfo testInfo) throws Exception {
+    protected void tearDown(final TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(null);
         super.tearDown(testInfo);
     }
 
-    protected String getName() {
-        TestInfo info = currentTestInfo.get();
-        return info != null ? info.getDisplayName() : "unknown";
-    }
-
     // ===== Assert methods for JUnit 4/5 compatibility =====
 
-    protected void fail(String message) {
+    protected void fail(final String message) {
         Assertions.fail(message);
     }
 
-    protected void assertTrue(String message, boolean condition) {
+    protected void assertTrue(final boolean condition) {
+        Assertions.assertTrue(condition);
+    }
+
+    protected void assertTrue(final String message, final boolean condition) {
         Assertions.assertTrue(condition, message);
     }
 
-    protected void assertFalse(String message, boolean condition) {
+    protected void assertFalse(final boolean condition) {
+        Assertions.assertFalse(condition);
+    }
+
+    protected void assertFalse(final String message, final boolean condition) {
         Assertions.assertFalse(condition, message);
     }
 
-    protected void assertEquals(String message, Object expected, Object actual) {
+    protected void assertEquals(final Object expected, final Object actual) {
+        Assertions.assertEquals(expected, actual);
+    }
+
+    protected void assertEquals(final String message, final Object expected, final Object actual) {
         Assertions.assertEquals(expected, actual, message);
     }
 
-    protected void assertEquals(String message, long expected, long actual) {
-        Assertions.assertEquals(expected, actual, message);
+    protected void assertNull(final Object object) {
+        Assertions.assertNull(object);
     }
 
-    protected void assertEquals(String message, double expected, double actual, double delta) {
-        Assertions.assertEquals(expected, actual, delta, message);
-    }
-
-    protected void assertEquals(double expected, double actual, double delta) {
-        Assertions.assertEquals(expected, actual, delta);
-    }
-
-    protected void assertEquals(String message, float expected, float actual, float delta) {
-        Assertions.assertEquals(expected, actual, delta, message);
-    }
-
-    protected void assertEquals(float expected, float actual, float delta) {
-        Assertions.assertEquals(expected, actual, delta);
-    }
-
-    protected void assertNotNull(String message, Object object) {
-        Assertions.assertNotNull(object, message);
-    }
-
-    protected void assertNull(String message, Object object) {
-        Assertions.assertNull(object, message);
-    }
-
-    protected void assertSame(Object expected, Object actual) {
-        Assertions.assertSame(expected, actual);
-    }
-
-    protected void assertSame(String message, Object expected, Object actual) {
-        Assertions.assertSame(expected, actual, message);
-    }
-
-    protected void assertNotSame(Object expected, Object actual) {
-        Assertions.assertNotSame(expected, actual);
-    }
-
-    protected void assertNotSame(String message, Object expected, Object actual) {
-        Assertions.assertNotSame(expected, actual, message);
+    protected void assertNotNull(final Object object) {
+        Assertions.assertNotNull(object);
     }
 }
