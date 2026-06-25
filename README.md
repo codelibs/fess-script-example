@@ -5,30 +5,41 @@
 
 A simple example plugin demonstrating how to create custom script engines for [Fess](https://fess.codelibs.org/), the open-source enterprise search server.
 
+## What Is a Script Engine?
+
+A Fess script engine turns a **template** plus a **parameter map** into a value. Fess uses script
+engines wherever an administrator can enter a small script or expression — for example to compute a
+document boost, derive a field value during crawling, or run logic in a scheduled job. The built-in
+`groovy` engine evaluates full Groovy scripts; this example shows the minimal shape of a custom one.
+
 ## Overview
 
-This plugin provides a minimal implementation of a custom script engine for Fess. The `ExampleEngine` serves as a template and starting point for developers who want to create their own script engines with custom template processing logic.
+This plugin provides a minimal implementation of a custom script engine for Fess. The `ExampleEngine`
+serves as a template and starting point for developers who want to create their own script engines
+with custom template processing logic.
 
 ### Key Features
 
-- **Simple Implementation**: Demonstrates the basic structure of a Fess script engine
-- **Template Pass-through**: Returns template strings unchanged (useful for testing and learning)
-- **Full Integration**: Properly integrated with Fess's dependency injection container
-- **Comprehensive Tests**: Includes extensive test cases covering edge cases and various scenarios
+- **Real, Minimal Evaluation**: Performs simple `${key}` placeholder substitution from the parameter map
+- **Idiomatic Structure**: Demonstrates the standard structure of a Fess script engine
+- **Self-Registration**: Registers itself with the script engine factory via the DI container
+- **Focused Tests**: Meaningful tests covering substitution, missing keys, null/blank input, and factory lookup
 
 ## Architecture
 
 The plugin extends Fess's `AbstractScriptEngine` class and implements:
 
-- **Template Evaluation**: Process template strings with parameter maps
-- **Engine Identification**: Provides a unique name ("example") for the script engine
-- **DI Integration**: Configured via LastaDi container for seamless Fess integration
+- **Template Evaluation** (`evaluate`): Substitutes `${key}` placeholders with values from the parameter map.
+  A blank template returns `null`; a missing or `null` value leaves the placeholder untouched.
+- **Engine Identification** (`getName`): Provides the unique name (`"example"`) used to register and look up the engine
+- **DI Integration**: `fess_se++.xml` registers the engine into Fess's `scriptEngineFactory` at startup
+  via a `register` postConstruct (the `++` suffix means the fragment is additively merged into the core `fess_se.xml`)
 
 ## Installation
 
 ### Prerequisites
 
-- Fess 15.0.0 or later
+- Fess 15.7.0 or later
 - Java 21 or later
 
 ### Download
@@ -42,20 +53,28 @@ You can download the plugin JAR from [Maven Central](https://repo1.maven.org/mav
 3. Restart Fess server
 4. The "example" script engine will be available for use
 
-For detailed installation instructions, see the [Fess Plugin Guide](https://fess.codelibs.org/15.0/admin/plugin-guide.html).
+For detailed installation instructions, see the [Fess Plugin Guide](https://fess.codelibs.org/15.7/admin/plugin-guide.html).
 
 ## Usage
 
-Once installed, you can use the "example" script engine in your Fess configuration:
+There is **no extra configuration to "use" the engine** — the plugin self-registers via
+`fess_se++.xml` when Fess starts. Once installed, the engine is available by its registered name,
+`example`, anywhere Fess lets you pick a script type, including:
 
-```xml
-<component name="exampleScriptEngine" class="org.codelibs.fess.script.example.ExampleEngine"/>
+- **Data store crawling** — field-mapping scripts that compute index field values
+- **Document boost** — boost expressions evaluated per document during crawling
+- **Scheduled jobs** — jobs whose *Script Type* is set to an engine name
+- **Path mappings / replacements** — value transformations that accept a script type
+
+In those places, select or enter `example` as the script type and provide a template such as
+`Hello ${name}`. Internally Fess resolves the engine through the factory:
+
+```java
+ComponentUtil.getScriptEngineFactory().getScriptEngine("example").evaluate(template, paramMap);
 ```
 
-The engine will process templates by returning them unchanged, making it useful for:
-- Testing script engine integration
-- Learning how to implement custom script engines
-- As a starting point for more complex implementations
+This example engine substitutes `${key}` placeholders with values from the parameter map, which
+makes it a useful starting point for learning the API and for building richer engines.
 
 ## Development
 
@@ -73,12 +92,11 @@ mvn clean package
 mvn test
 ```
 
-The test suite includes 19 comprehensive test cases covering:
-- Basic functionality
-- Edge cases (null/empty inputs)
-- Various data types and special characters
-- Multi-line templates and large content
-- Instance independence and data integrity
+The test suite includes focused test cases covering:
+- Placeholder substitution (single, multiple, and non-string values)
+- Missing-key and null-value behavior (placeholder left untouched)
+- Blank/null template handling (returns `null`)
+- Engine name and factory registration/lookup by name
 
 ### Code Quality
 
@@ -99,12 +117,16 @@ mvn javadoc:javadoc
 src/
 ├── main/java/
 │   └── org/codelibs/fess/script/example/
-│       └── ExampleEngine.java          # Main script engine implementation
+│       └── ExampleEngine.java          # Script engine implementation (${key} substitution)
 ├── main/resources/
-│   └── fess_se++.xml                    # DI container configuration
-└── test/java/
-    └── org/codelibs/fess/script/example/
-        └── ExampleEngineTest.java       # Comprehensive test suite
+│   └── fess_se++.xml                    # DI fragment that registers the engine (additive merge)
+└── test/
+    ├── java/
+    │   └── org/codelibs/fess/script/example/
+    │       ├── ExampleEngineTest.java   # Engine tests + factory lookup
+    │       └── UnitScriptTestCase.java  # Minimal UTFlute test base for the plugin
+    └── resources/
+        └── test_app.xml                 # Test DI container (includes scriptEngineFactory)
 ```
 
 ## Creating Your Own Script Engine

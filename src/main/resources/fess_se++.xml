@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE components PUBLIC "-//DBFLUTE//DTD LastaDi 1.0//EN"
 	"http://dbflute.org/meta/lastadi10.dtd">
+<!--
+	The "++" suffix marks this as an additive-merge fragment: LastaDi merges its
+	components into the existing fess_se.xml definitions instead of replacing them,
+	so this plugin can contribute a new engine without redefining the factory.
+
+	The "register" postConstruct calls AbstractScriptEngine#register(), which adds
+	this engine to the scriptEngineFactory under ExampleEngine#getName() ("example").
+-->
 <components>
 	<component name="exampleEngine"
 		class="org.codelibs.fess.script.example.ExampleEngine">
